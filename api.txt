@@ -1,0 +1,797 @@
+# Public API of github.com/laenenai/escrow, as a golden file.
+#
+# Regenerate with: go test . -run TestAPIGolden -update-api
+#
+# "package escrow" is the facade a consumer imports; "package escrowtest" is
+# the conformance suite it runs against its own wiring. The internal packages
+# are listed too, because the facade re-exports their types as aliases: a
+# change to one of those signatures changes what a consumer sees, even though
+# the import path itself is private. Growing this file is a reviewed diff —
+# see CHARTER.md.
+
+package escrow // .
+
+type Applied = migrate.Applied
+
+type Attempt = domain.Attempt
+
+const AttemptFailed = domain.AttemptFailed
+
+type AttemptKind = domain.AttemptKind
+
+var AttemptKinds = domain.AttemptKinds
+
+const AttemptNotification = domain.AttemptNotification
+
+type AttemptOutcome = domain.AttemptOutcome
+
+var AttemptOutcomes = domain.AttemptOutcomes
+
+const AttemptProofOfLife = domain.AttemptProofOfLife
+
+const AttemptRefused = domain.AttemptRefused
+
+const AttemptShareRelease = domain.AttemptShareRelease
+
+const AttemptSucceeded = domain.AttemptSucceeded
+
+const AttemptUnseal = domain.AttemptUnseal
+
+func CanonicalTime(t time.Time) time.Time
+
+type Ceremony = domain.Ceremony
+
+const CeremonyCompleted = domain.CeremonyCompleted
+
+const CeremonyFailed = domain.CeremonyFailed
+
+type CeremonyID = domain.CeremonyID
+
+type CeremonyOutcome = domain.CeremonyOutcome
+
+var CeremonyOutcomes = domain.CeremonyOutcomes
+
+const CeremonyRefused = domain.CeremonyRefused
+
+type ChannelID = domain.ChannelID
+
+type Clock = domain.Clock
+
+type Config = pgstore.Config
+
+func Create(tenant TenantID, plan Plan, clock Clock) (Seal, SealedKey, []Share, error)
+
+type Custodian = domain.Custodian
+
+type CustodianID = domain.CustodianID
+
+type DB = pgstore.DB
+
+const EffectNone = domain.EffectNone
+
+const EffectShareRelease = domain.EffectShareRelease
+
+const EffectUnseal = domain.EffectUnseal
+
+var ErrDuplicateShare = domain.ErrDuplicateShare
+
+var ErrForeignShare = domain.ErrForeignShare
+
+var ErrInsufficientShares = domain.ErrInsufficientShares
+
+var ErrInvalidArgument = domain.ErrInvalidArgument
+
+var ErrInvalidConfig = domain.ErrInvalidConfig
+
+var ErrInvalidKeyMaterial = domain.ErrInvalidKeyMaterial
+
+var ErrInvalidSchedule = domain.ErrInvalidSchedule
+
+var ErrInvalidShare = domain.ErrInvalidShare
+
+var ErrInvalidThreshold = domain.ErrInvalidThreshold
+
+var ErrMalformedID = domain.ErrMalformedID
+
+var ErrNoHeldShare = domain.ErrNoHeldShare
+
+var ErrReconstructionUnverified = domain.ErrReconstructionUnverified
+
+var ErrSealExists = domain.ErrSealExists
+
+var ErrSealNotFound = domain.ErrSealNotFound
+
+var ErrShareAlreadyHeld = domain.ErrShareAlreadyHeld
+
+var ErrStorage = domain.ErrStorage
+
+var ErrUnavailable = domain.ErrUnavailable
+
+type Escalation = domain.Escalation
+
+func EvaluateLiveness(schedule LivenessSchedule, proofs []ProofOfLife, now time.Time) (Liveness, error)
+
+const FirstGeneration = domain.FirstGeneration
+
+type FixedClock = domain.FixedClock
+
+type Generation = domain.Generation
+
+const HolderExternal = domain.HolderExternal
+
+type HolderKind = domain.HolderKind
+
+const HolderSystem = domain.HolderSystem
+
+func ImportShare(b []byte) (Share, error)
+
+type KeyCommitment = domain.KeyCommitment
+
+const KeySize = domain.KeySize
+
+type Liveness = domain.Liveness
+
+type LivenessSchedule = domain.LivenessSchedule
+
+type LivenessState = domain.LivenessState
+
+var LivenessStates = domain.LivenessStates
+
+type Log = audit.Log
+
+const MaxShares = domain.MaxShares
+
+const MaxSystemHeldShares = domain.MaxSystemHeldShares
+
+type MemoryConfig = sealstore.MemoryConfig
+
+func Migrate(ctx context.Context, pool *pgxpool.Pool, cfg MigrateConfig) error
+
+type MigrateConfig = migrate.Config
+
+func MigrationStatus(ctx context.Context, pool *pgxpool.Pool) ([]Applied, error)
+
+const MinEscalationChannels = domain.MinEscalationChannels
+
+const MinThreshold = domain.MinThreshold
+
+var NewCeremonyID = domain.NewCeremonyID
+
+func NewFixedClock(t time.Time) *FixedClock
+
+func NewMemory(cfg MemoryConfig) (SealStore, error)
+
+var NewProofID = domain.NewProofID
+
+var NewSealID = domain.NewSealID
+
+func NewSealedKey() (SealedKey, error)
+
+func NewTrail(log Log) (*Trail, error)
+
+type Notification = domain.Notification
+
+type Notifier = notify.Notifier
+
+func Open(ctx context.Context, cfg Config) (SealStore, error)
+
+var ParseCeremonyID = domain.ParseCeremonyID
+
+var ParseCustodianID = domain.ParseCustodianID
+
+var ParseKeyCommitment = domain.ParseKeyCommitment
+
+var ParseProofID = domain.ParseProofID
+
+var ParseSealID = domain.ParseSealID
+
+var ParseTenantID = domain.ParseTenantID
+
+type Plan = threshold.Plan
+
+func PlanFrom(seal Seal) Plan
+
+type ProofID = domain.ProofID
+
+type ProofOfLife = domain.ProofOfLife
+
+func Reconstruct(seal Seal, shares []Share) (SealedKey, error)
+
+const Redacted = domain.Redacted
+
+const ReleaseByHumanAct = domain.ReleaseByHumanAct
+
+const ReleaseByLivenessLapse = domain.ReleaseByLivenessLapse
+
+const ReleaseByThreshold = domain.ReleaseByThreshold
+
+type ReleaseConditionKind = domain.ReleaseConditionKind
+
+var ReleaseConditionKinds = domain.ReleaseConditionKinds
+
+type ReleaseEffect = domain.ReleaseEffect
+
+func Rotate(seal Seal, plan Plan, clock Clock) (Seal, SealedKey, []Share, error)
+
+const Schema = migrate.Schema
+
+type Seal = domain.Seal
+
+type SealID = domain.SealID
+
+type SealStore = sealstore.SealStore
+
+type SealedKey = domain.SealedKey
+
+func SealedKeyFrom(b []byte) (SealedKey, error)
+
+type Share = domain.Share
+
+type ShareIndex = domain.ShareIndex
+
+const StateAlive = domain.StateAlive
+
+const StateGrace = domain.StateGrace
+
+const StateLapsed = domain.StateLapsed
+
+const StateOverdue = domain.StateOverdue
+
+type SystemClock = domain.SystemClock
+
+type TenantID = domain.TenantID
+
+type Threshold = domain.Threshold
+
+type Trail = trail.Trail
+
+package escrowtest // escrowtest
+
+type Deployment struct {
+	Store escrow.SealStore
+	Tenant escrow.TenantID
+}
+
+func NoSecretLeaksInAnyRendering(t *testing.T, v any, material []byte)
+
+func RunSealStoreSuite(t *testing.T, newDeployment func(t *testing.T) Deployment)
+
+package domain // internal/domain
+
+type Attempt struct {
+	Tenant TenantID
+	Seal SealID
+	Generation Generation
+	Kind AttemptKind
+	Outcome AttemptOutcome
+	Actor CustodianID
+	Channel ChannelID
+	Ceremony CeremonyID
+	Reason string
+	At time.Time
+}
+
+func (Attempt) Validate() error
+
+const AttemptFailed AttemptOutcome = "failed"
+
+type AttemptKind string
+
+func (AttemptKind) String() string
+
+func (AttemptKind) Validate() error
+
+func AttemptKinds() []AttemptKind
+
+const AttemptNotification AttemptKind = "notification"
+
+type AttemptOutcome string
+
+func (AttemptOutcome) String() string
+
+func (AttemptOutcome) Validate() error
+
+func AttemptOutcomes() []AttemptOutcome
+
+const AttemptProofOfLife AttemptKind = "proof_of_life"
+
+const AttemptRefused AttemptOutcome = "refused"
+
+const AttemptShareRelease AttemptKind = "share_release"
+
+const AttemptSucceeded AttemptOutcome = "succeeded"
+
+const AttemptUnseal AttemptKind = "unseal"
+
+func CanonicalTime(t time.Time) time.Time
+
+type Ceremony struct {
+	Tenant TenantID
+	ID CeremonyID
+	Seal SealID
+	Generation Generation
+	Condition ReleaseConditionKind
+	Effect ReleaseEffect
+	Participants []CustodianID
+	SharesPresented int
+	SharesRequired int
+	Outcome CeremonyOutcome
+	Reason string
+	At time.Time
+}
+
+func (Ceremony) Clone() Ceremony
+
+func (Ceremony) Equal(other Ceremony) bool
+
+func (Ceremony) Validate() error
+
+const CeremonyCompleted CeremonyOutcome = "completed"
+
+const CeremonyFailed CeremonyOutcome = "failed"
+
+type CeremonyID struct {
+	// has unexported fields
+}
+
+func (CeremonyID) IsZero() bool
+
+func (CeremonyID) String() string
+
+type CeremonyOutcome string
+
+func (CeremonyOutcome) String() string
+
+func (CeremonyOutcome) Validate() error
+
+func CeremonyOutcomes() []CeremonyOutcome
+
+const CeremonyRefused CeremonyOutcome = "refused"
+
+type ChannelID string
+
+func (ChannelID) String() string
+
+func (ChannelID) Validate() error
+
+type Clock interface {
+	Now() time.Time
+}
+
+func CommitKey(seal SealID, generation Generation, key SealedKey) KeyCommitment
+
+type Custodian struct {
+	ID CustodianID
+	Holder HolderKind
+	Index ShareIndex
+}
+
+func (Custodian) Validate() error
+
+type CustodianID struct {
+	// has unexported fields
+}
+
+func (CustodianID) IsZero() bool
+
+func (CustodianID) String() string
+
+const EffectNone ReleaseEffect = ""
+
+const EffectShareRelease ReleaseEffect = "share"
+
+const EffectUnseal ReleaseEffect = "unseal"
+
+var ErrDuplicateShare = errors.New("escrow: duplicate share index")
+
+var ErrForeignShare = errors.New("escrow: share does not belong to this seal and generation")
+
+var ErrInsufficientShares = errors.New("escrow: not enough shares to reach the threshold")
+
+var ErrInvalidArgument = errors.New("escrow: invalid argument")
+
+var ErrInvalidConfig = errors.New("escrow: invalid configuration")
+
+var ErrInvalidKeyMaterial = errors.New("escrow: invalid key material")
+
+var ErrInvalidSchedule = errors.New("escrow: invalid liveness schedule")
+
+var ErrInvalidShare = errors.New("escrow: invalid share")
+
+var ErrInvalidThreshold = errors.New("escrow: invalid threshold")
+
+var ErrMalformedID = errors.New("escrow: malformed id")
+
+var ErrNoHeldShare = errors.New("escrow: no share is held for this seal")
+
+var ErrReconstructionUnverified = errors.New("escrow: reconstructed key failed its commitment")
+
+var ErrSealExists = errors.New("escrow: seal already exists")
+
+var ErrSealNotFound = errors.New("escrow: seal not found")
+
+var ErrShareAlreadyHeld = errors.New("escrow: a share is already held for this seal")
+
+var ErrStorage = errors.New("escrow: store rejected the operation")
+
+var ErrUnavailable = errors.New("escrow: store unavailable")
+
+type Escalation struct {
+	After time.Duration
+	Channel ChannelID
+}
+
+func Evaluate(s LivenessSchedule, proofs []ProofOfLife, now time.Time) (Liveness, error)
+
+const FirstGeneration Generation = 1
+
+type FixedClock struct {
+	// has unexported fields
+}
+
+func (*FixedClock) Advance(d time.Duration)
+
+func (*FixedClock) Now() time.Time
+
+type Generation uint32
+
+func (Generation) Next() Generation
+
+func (Generation) String() string
+
+func (Generation) Validate() error
+
+const HolderExternal HolderKind = "external"
+
+type HolderKind string
+
+func (HolderKind) String() string
+
+func (HolderKind) Validate() error
+
+const HolderSystem HolderKind = "system"
+
+func ImportShare(b []byte) (Share, error)
+
+type KeyCommitment [sha256.Size]byte
+
+func (KeyCommitment) Equal(other KeyCommitment) bool
+
+func (KeyCommitment) IsZero() bool
+
+func (KeyCommitment) String() string
+
+func KeyCommitmentFrom(b []byte) (KeyCommitment, error)
+
+const KeySize = 32
+
+type Liveness struct {
+	State LivenessState
+	CountingFrom time.Time
+	Deadline time.Time
+	GraceStartsAt time.Time
+	LapsesAt time.Time
+	Due []Notification
+}
+
+func (Liveness) Effect() ReleaseEffect
+
+func (Liveness) ShareReleaseDue() bool
+
+type LivenessSchedule struct {
+	Since time.Time
+	CheckIn time.Duration
+	Escalations []Escalation
+	Grace time.Duration
+}
+
+func (LivenessSchedule) Clone() LivenessSchedule
+
+func (LivenessSchedule) Span() time.Duration
+
+func (LivenessSchedule) Validate() error
+
+type LivenessState string
+
+func LivenessStates() []LivenessState
+
+const MaxShares = 255
+
+const MaxSystemHeldShares = 1
+
+const MinEscalationChannels = 2
+
+const MinThreshold = 2
+
+func NewCeremonyID(clock Clock) (CeremonyID, error)
+
+func NewFixedClock(t time.Time) *FixedClock
+
+func NewProofID(clock Clock) (ProofID, error)
+
+func NewSealID(clock Clock) (SealID, error)
+
+func NewSealedKey() (SealedKey, error)
+
+func NewShare(seal SealID, generation Generation, index ShareIndex, material []byte) (Share, error)
+
+type Notification struct {
+	Stage int
+	Channel ChannelID
+	DueAt time.Time
+}
+
+func ParseCeremonyID(s string) (CeremonyID, error)
+
+func ParseCustodianID(s string) (CustodianID, error)
+
+func ParseKeyCommitment(s string) (KeyCommitment, error)
+
+func ParseProofID(s string) (ProofID, error)
+
+func ParseSealID(s string) (SealID, error)
+
+func ParseTenantID(s string) (TenantID, error)
+
+type ProofID struct {
+	// has unexported fields
+}
+
+func (ProofID) IsZero() bool
+
+func (ProofID) String() string
+
+type ProofOfLife struct {
+	Seal SealID
+	ID ProofID
+	At time.Time
+	Channel ChannelID
+}
+
+func (ProofOfLife) Equal(other ProofOfLife) bool
+
+func (ProofOfLife) Validate() error
+
+const Redacted = "[REDACTED]"
+
+const ReleaseByHumanAct ReleaseConditionKind = "human_act"
+
+const ReleaseByLivenessLapse ReleaseConditionKind = "liveness_lapse"
+
+const ReleaseByThreshold ReleaseConditionKind = "threshold_reached"
+
+type ReleaseConditionKind string
+
+func (ReleaseConditionKind) Effect() ReleaseEffect
+
+func (ReleaseConditionKind) String() string
+
+func (ReleaseConditionKind) Validate() error
+
+func ReleaseConditionKinds() []ReleaseConditionKind
+
+type ReleaseEffect string
+
+func (ReleaseEffect) String() string
+
+type Seal struct {
+	Tenant TenantID
+	ID SealID
+	Generation Generation
+	Threshold Threshold
+	Commitment KeyCommitment
+	Custodians []Custodian
+	Liveness LivenessSchedule
+	CreatedAt time.Time
+	SealedAt time.Time
+}
+
+func (Seal) AcceptsHeldShare(share Share) error
+
+func (Seal) Clone() Seal
+
+func (Seal) Custodian(index ShareIndex) (Custodian, bool)
+
+func (Seal) IsSystemSufficient() bool
+
+func (Seal) SystemCustodian() (Custodian, bool)
+
+func (Seal) SystemHeldShares() int
+
+func (Seal) Validate() error
+
+type SealID struct {
+	// has unexported fields
+}
+
+func (SealID) IsZero() bool
+
+func (SealID) String() string
+
+type SealedKey struct {
+	// has unexported fields
+}
+
+func (SealedKey) Bytes() []byte
+
+func (*SealedKey) Destroy()
+
+func (SealedKey) Equal(other SealedKey) bool
+
+func (SealedKey) Format(f fmt.State, verb rune)
+
+func (SealedKey) IsZero() bool
+
+func (SealedKey) LogValue() slog.Value
+
+func (SealedKey) MarshalJSON() ([]byte, error)
+
+func (SealedKey) String() string
+
+func (*SealedKey) UnmarshalJSON([]byte) error
+
+func (SealedKey) Validate() error
+
+func SealedKeyFrom(b []byte) (SealedKey, error)
+
+type Share struct {
+	// has unexported fields
+}
+
+func (*Share) Destroy()
+
+func (Share) Export() ([]byte, error)
+
+func (Share) Format(f fmt.State, verb rune)
+
+func (Share) Generation() Generation
+
+func (Share) Index() ShareIndex
+
+func (Share) IsZero() bool
+
+func (Share) LogValue() slog.Value
+
+func (Share) MarshalJSON() ([]byte, error)
+
+func (Share) Material() []byte
+
+func (Share) Seal() SealID
+
+func (Share) String() string
+
+func (*Share) UnmarshalJSON([]byte) error
+
+func (Share) Validate() error
+
+type ShareIndex uint8
+
+func (ShareIndex) Validate() error
+
+const StateAlive LivenessState = "alive"
+
+const StateGrace LivenessState = "grace"
+
+const StateLapsed LivenessState = "lapsed"
+
+const StateOverdue LivenessState = "overdue"
+
+type SystemClock struct{}
+
+func (SystemClock) Now() time.Time
+
+type TenantID struct {
+	// has unexported fields
+}
+
+func (TenantID) IsZero() bool
+
+func (TenantID) String() string
+
+type Threshold struct {
+	Required int
+	Total int
+}
+
+func (Threshold) String() string
+
+func (Threshold) Validate() error
+
+package migrate // internal/migrate
+
+type Applied struct {
+	Version int64
+	Name string
+	Applied bool
+	AppliedAt time.Time
+}
+
+type Config struct {
+	AppRole string
+}
+
+const Schema = "escrow"
+
+func Status(ctx context.Context, pool *pgxpool.Pool) ([]Applied, error)
+
+var Tables = []string{
+	Schema + ".seal",
+	Schema + ".custodian",
+	Schema + ".escalation",
+	Schema + ".held_share",
+	Schema + ".proof_of_life",
+	Schema + ".ceremony",
+}
+
+func Up(ctx context.Context, pool *pgxpool.Pool, cfg Config) error
+
+package notify // internal/notify
+
+type Notifier interface {
+	Channel() domain.ChannelID
+	Notify(ctx context.Context, seal domain.Seal, n domain.Notification) error
+}
+
+package pgstore // internal/pgstore
+
+type Config struct {
+	DB DB
+	Tenant domain.TenantID
+	AppRole string
+}
+
+type DB interface {
+	Begin(ctx context.Context) (pgx.Tx, error)
+}
+
+func Open(_ context.Context, cfg Config) (sealstore.SealStore, error)
+
+package sealstore // internal/sealstore
+
+type MemoryConfig struct {
+	Tenant domain.TenantID
+}
+
+func NewMemory(cfg MemoryConfig) (SealStore, error)
+
+type SealStore interface {
+	CreateSeal(ctx context.Context, seal domain.Seal) error
+	Seal(ctx context.Context, id domain.SealID) (domain.Seal, error)
+	ReplaceSeal(ctx context.Context, seal domain.Seal) error
+	HoldShare(ctx context.Context, share domain.Share) error
+	HeldShare(ctx context.Context, id domain.SealID) (domain.Share, error)
+	DiscardHeldShare(ctx context.Context, id domain.SealID) error
+	RecordProofOfLife(ctx context.Context, proof domain.ProofOfLife) error
+	ProofsOfLife(ctx context.Context, id domain.SealID) ([]domain.ProofOfLife, error)
+	RecordCeremony(ctx context.Context, ceremony domain.Ceremony) error
+	Ceremonies(ctx context.Context, id domain.SealID) ([]domain.Ceremony, error)
+}
+
+package threshold // internal/threshold
+
+func Create(tenant domain.TenantID, plan Plan, clock domain.Clock) (domain.Seal, domain.SealedKey, []domain.Share, error)
+
+type Plan struct {
+	Threshold domain.Threshold
+	Holders []domain.CustodianID
+	System domain.CustodianID
+	Liveness domain.LivenessSchedule
+}
+
+func (Plan) Validate() error
+
+func PlanFrom(seal domain.Seal) Plan
+
+func Reconstruct(seal domain.Seal, shares []domain.Share) (domain.SealedKey, error)
+
+func Rotate(seal domain.Seal, plan Plan, clock domain.Clock) (domain.Seal, domain.SealedKey, []domain.Share, error)
+
+package trail // internal/trail
+
+func New(log audit.Log) (*Trail, error)
+
+type Trail struct {
+	// has unexported fields
+}
+
+func (*Trail) Record(ctx context.Context, attempt domain.Attempt) error

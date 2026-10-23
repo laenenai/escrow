@@ -1,0 +1,65 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    schema: "db/migrations"
+    queries: "db/queries"
+    gen:
+      go:
+        package: "gen"
+        out: "internal/pgstore/gen"
+        sql_package: "pgx/v5"
+        emit_pointers_for_null_types: true
+        overrides:
+          # There are deliberately **no id-column overrides in this module**,
+          # which is the opposite of what cas's and audit's sqlc.yaml do, and
+          # the reason is CONVENTIONS.md's own rule rather than a departure
+          # from it.
+          #
+          # cas and audit override their id columns onto named primitive
+          # types (TenantID string, EventID string) so a generated layer
+          # never hands back a bare string. Every identifier in *this* module
+          # is instead a deliberately opaque struct with one unexported field
+          # — domain.SealID, domain.TenantID, domain.CustodianID,
+          # domain.CeremonyID, domain.ProofID — because the seal id is a
+          # cryptographic input to the key commitment and to every share's
+          # binding, so a value that reached a commitment without having been
+          # parsed would produce a seal whose shares verify against nothing.
+          #
+          # CONVENTIONS.md says what to do with such a type: it "maps to its
+          # **primitive**, and the adapter converts through the validating
+          # parser at its own boundary", and it says explicitly never to give
+          # it sql.Scanner or driver.Valuer — those methods are exported, so
+          # any package could then construct one from an arbitrary string,
+          # which destroys exactly the unforgeability the type exists for. So
+          # every id column stays `text`, and internal/pgstore converts
+          # through ParseSealID, ParseTenantID and friends, one conversion
+          # per field.
+          #
+          # The two bytea columns are not overridden for the second limit
+          # CONVENTIONS.md records: pgx has no scan plan from bytea into a
+          # fixed-size array, so an override onto domain.KeyCommitment
+          # ([32]byte) would compile and then fail at run time. They map to
+          # []byte and the adapter converts through
+          # domain.KeyCommitmentFrom, which rejects a wrong length rather
+          # than truncating. escrow.held_share.material is likewise []byte
+          # and reaches domain.NewShare, which validates it.
+          #
+          # What **is** overridden is the five timestamptz columns, each of
+          # which is NOT NULL. pgx/v5 would otherwise produce
+          # pgtype.Timestamptz, whose Valid flag encodes a state the schema
+          # does not permit, and these instants go through
+          # domain.CanonicalTime on the way in and are compared with Equal on
+          # the way out — a wrapper would put a .Time dereference between the
+          # column and the canonicalizer in both directions.
+          - column: "escrow.seal.liveness_since"
+            go_type: "time.Time"
+          - column: "escrow.seal.created_at"
+            go_type: "time.Time"
+          - column: "escrow.seal.sealed_at"
+            go_type: "time.Time"
+          - column: "escrow.held_share.held_at"
+            go_type: "time.Time"
+          - column: "escrow.proof_of_life.observed_at"
+            go_type: "time.Time"
+          - column: "escrow.ceremony.concluded_at"
+            go_type: "time.Time"
