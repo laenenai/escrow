@@ -48,19 +48,54 @@ So the design is driven by the failure, not by the feature.
    the custodian needs to know what to do without the one person who is by
    definition unavailable.
 
-## Relationship to the three enforcement tiers
+## Relationship to the two enforcement tiers
 
-Per the kgs design, authorization has three tiers: discretionary (relation
-tuples), mandatory (classifications that no grant can satisfy), and
-**cryptographic** — a key the system does not hold. Policy tiers are enforced
-by whoever administers policy; only the cryptographic tier survives the
-administrator, the operator, a subpoena and every future rule change. This
-module is that tier's custody mechanism. `iam` records a classification's
-**enforcement class**; `escrow` is what makes the crypto class real.
+Per `iam` and kgs as of 2026-10-23, authorization has **two** tiers:
+**discretionary** — ReBAC grants over a containment hierarchy, default-deny —
+and **cryptographic**, a key the deployment does not hold. There is no third,
+and there is no deny mechanism at all; that is an anti-goal rather than a
+restriction that emerged from an implementation.
 
-The cost is total and must be stated to users rather than discovered by them: a
-crypto-sealed document cannot be OCR'd, extracted, indexed, embedded or
-summarised. You cannot ask the brain what your own will says.
+The argument this section used to make as one of three now stands alone, which
+makes it stronger and not weaker. Policy is enforced by whoever administers
+policy, so a deny administered by policy is only as absolute as whoever
+administers the policy. "This principal may never see this" is therefore
+expressed by **never granting it** — and an absolute that must survive a future
+administrator, an operator, a subpoena and every future rule change is **a key
+the deployment does not hold**. This module is that key's custody mechanism,
+and it is now the whole of the system's answer rather than the third of three
+options.
+
+**What was removed, and why, because the sentence this section used to end on
+named a thing that no longer exists.** The earlier framing had a middle tier —
+mandatory classifications that no grant could satisfy, with `iam` recording a
+classification's **enforcement class** and `escrow` making the crypto class
+real. That tier is gone from `iam`: classifications, clearance groups,
+mandatory acts, mandatory channels and the mandatory gate in the decision
+procedure are all removed, so there is no enforcement class for this module to
+be pointed at by. What seals a thing now is the decision to seal it, not a
+label whose class resolves here.
+
+It lost on two grounds. First, structurally: **a classification *is* a deny**,
+and a deny administered by policy is only as absolute as its administrator — so
+the middle tier was promising an absoluteness it could not hold, while routing
+ordinary privacy through it turned every preference into an absolute no owner
+could lift. Second, by measurement: it made classification *assignment*
+cardinality the system's real performance problem. The tier-2 anti-join walked
+200,394 rows and turned a 0.46 ms keyset page into **296 ms**, against a tier-1
+closure join of 0.006 ms per candidate row, index-served. The diagnosis is the
+part worth keeping, because it generalises: that design anchored on "this
+principal may never see this" — a rare case — and made it the template for the
+common one.
+
+**The consequence has to be stated rather than softened: policy now makes no
+absolute promises.** Everything the discretionary tier enforces is grantable,
+revocable and administrable by someone. Anything that must be absolute arrives
+here instead — and the cost here is total, which means the absolute is also
+unreadable. A crypto-sealed document cannot be OCR'd, extracted, indexed,
+embedded or summarised. You cannot ask the brain what your own will says. That
+cost used to be one option's price among three; it is now the price of
+absoluteness in this system, and a user who needs an absolute pays it.
 
 ## Adoption
 
@@ -79,3 +114,15 @@ two things — that policy alone cannot make an absolute promise, because policy
 is enforced by whoever administers it, and that a third enforcement tier is
 therefore required.
 Escrowed-with-a-ceremony and a dead-man's switch chosen the same day.
+
+**Half of that finding was superseded later the same day, in this module's
+favour.** The middle tier that made this "a third" — mandatory classifications
+and clearances — was removed from `iam` on 2026-10-23, because a classification
+is itself a deny administered by policy and therefore inherited the very
+weakness the first half of this finding identified. The first half is what
+won, and it is now load-bearing for the whole system rather than for one tier
+of three: policy makes no absolute promises, so an absolute is a key the
+deployment does not hold. Kept here as history because the reversal is the
+record worth having — only the arithmetic changed, from third of three to
+second of two, and from one option among several to the only absolute
+mechanism there is.
