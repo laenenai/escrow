@@ -252,6 +252,8 @@ type Deployment struct {
 	Tenant escrow.TenantID
 }
 
+func NoSecretLeaksInAnyRendering(t *testing.T, v any, material []byte)
+
 func RunSealStoreSuite(t *testing.T, newDeployment func(t *testing.T) Deployment)
 
 package domain // internal/domain
