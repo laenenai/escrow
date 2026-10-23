@@ -254,6 +254,8 @@ type Deployment struct {
 
 func NoSecretLeaksInAnyRendering(t *testing.T, v any, material []byte)
 
+func RendersOnlyARedactionMarker(t *testing.T, v any)
+
 func RunSealStoreSuite(t *testing.T, newDeployment func(t *testing.T) Deployment)
 
 package domain // internal/domain
