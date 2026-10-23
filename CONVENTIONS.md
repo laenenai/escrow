@@ -218,10 +218,12 @@ the other had it backwards.
     column. Typed ids survive to the boundary and a generated layer never hands
     back a bare string.
   - **A deliberately opaque type** — a struct with an unexported field, so that
-    no package outside `internal/domain` can forge or convert one, as
-    `iam.ClearanceGroupID` is — maps to its **primitive**, and the adapter
-    converts through the validating parser (`ParseClearanceGroupID`) at its own
-    boundary. One conversion per field, and the invariant is untouched.
+    no package outside `internal/domain` can forge or convert one, as this
+    module's own `SealID` is — maps to its **primitive**, and the adapter
+    converts through the validating parser (`ParseSealID`) at its own boundary.
+    One conversion per field, and the invariant is untouched. (This example used
+    to name `iam.ClearanceGroupID`, which no longer exists: clearance groups
+    went with the mandatory tier on 2026-10-23. The convention is unchanged.)
 
   **Never give such a type `sql.Scanner` or `driver.Valuer`.** Those methods are
   exported, so any package could then construct one from an arbitrary string —

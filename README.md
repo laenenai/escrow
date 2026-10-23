@@ -45,10 +45,21 @@ mutable and administrators exist.
 So for the cases where "private under all circumstances" has to survive the
 administrator, the operator, a subpoena and every future policy change, the
 only mechanism left is one where **the system cannot decrypt**. This module is
-that tier's custody mechanism.
+that key's custody mechanism.
 
-The cost is total and must be stated to users rather than discovered by them: a
-crypto-sealed document cannot be indexed, extracted, summarised or searched.
+As of 2026-10-23 there are **two** enforcement tiers, not three: discretionary
+grants (`iam`, default-deny, everything revocable) and cryptographic custody
+(here). The mandatory middle tier — classifications no grant could satisfy — is
+removed, because a classification is itself a deny administered by policy and
+so inherited the weakness in the paragraph above; **there is no deny mechanism
+at all, by intent.** "This principal may never see this" is expressed by never
+granting it, and an absolute is a key the deployment does not hold. See
+[`CHARTER.md`](CHARTER.md) for the full argument and what it cost.
+
+So the consequence, stated rather than left to be discovered: **policy makes no
+absolute promises**, and everything absolute is here — where the cost is total.
+A crypto-sealed document cannot be indexed, extracted, summarised or searched.
+You cannot ask the brain what your own will says.
 
 ## Five safety properties
 
