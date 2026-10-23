@@ -72,8 +72,10 @@ summarised. You cannot ask the brain what your own will says.
 
 ## Provenance
 
-Raised by the owner 2026-10-23, from the requirement: "whatever rule ever
-happens my will document should always stay private except if I die and the
-lawyer gives the access key" — the example that established that policy alone
-cannot make an absolute promise, and that a third enforcement tier is required.
+Raised 2026-10-23 from a requirement of the form: *a will must stay private
+under every rule the system will ever have, and become readable only on the
+author's death, when a named lawyer supplies a key.* That example established
+two things — that policy alone cannot make an absolute promise, because policy
+is enforced by whoever administers it, and that a third enforcement tier is
+therefore required.
 Escrowed-with-a-ceremony and a dead-man's switch chosen the same day.
